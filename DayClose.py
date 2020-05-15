@@ -10,6 +10,8 @@ if sec == '' or float(sec) < 0.9:
 else:
 	sec = float(sec)
 
+mode = str(input('Select mode: 1. EFT rapid entry mode 2. Tradition entry and check mode >>>'))
+
 print('''
 Developed by :- 
 Anil Shrestha, Chief Treasury Comptroller, District Treasury Comptroller Office, Makawanpur
@@ -64,66 +66,61 @@ while True:
 	pyautogui.alert('{} records to enter!!!'.format(df.shape[0]))
 	
 	for i in range(df.shape[0]):
-
 		if do_alt_tab == True:
 			do_alt_tab = False
 			single_alt_tab()
 
 		cheque_no = extract_cheque_no(str(df.iat[i,0]))
-		clipboard.copy(cheque_no)
+		# clipboard.copy(cheque_no)
 
 		if keyboard.is_pressed('shift'):
 			pyautogui.alert('PAUSED...... Press OK to continue >>')
-		paste()
+			break
+		# paste()
+		pyautogui.typewrite(str(cheque_no))
 
-		# clipboard.copy('check condition')
 		pyautogui.press('tab')
-		# time.sleep(0.2)
-		# pyautogui.press('esc')
-		# time.sleep(0.2)
-		# pyautogui.press('esc')
-		# time.sleep(0.2)
-		# copy()
-
-		# if 'check condition' not in clipboard.paste():
-		# 	input('Check number {} does not match !!!!. Continue after manual correction>>>'.format(cheque_no))
-		# 	do_alt_tab = True
-		# 	continue
-
 		amount = trim_special_char(str(df.iat[i,int(dayclose_type)]))
-
-		if float(amount) == 0:
-			continue
 
 		if keyboard.is_pressed('shift'):
 			pyautogui.alert(text='PAUSED...... Press OK to continue >>')
+			break
 
 		if str(dayclose_type) == '1':
 			amount = '-{}'.format(str(amount))
 
-		clipboard.copy(amount)
-		paste()
-		
-		clipboard.copy('check condition')
-		pyautogui.press('tab')
-		time.sleep(sec - 0.6)
-		pyautogui.press('esc')
-		time.sleep(0.3)
-		pyautogui.press('esc')
-		time.sleep(0.3)
-		copy()
-		if 'check condition' not in clipboard.paste():
-			single_alt_tab()
-			cc = input(f'\n => Amount of {df.iat[i,int(dayclose_type)]} does not match for cheque number {cheque_no} !!!!.\nContinue after manual correction \n OR type restart to restart the process again>>>')
-			if cc == 'restart':
-				break
+		if mode == '2':
+			# clipboard.copy(amount)
+			# paste()
+			pyautogui.typewrite(str(amount))
+			
+			clipboard.copy('check condition')
+			pyautogui.press('tab')
+			time.sleep(sec - 0.6)
+			pyautogui.press('esc')
+			time.sleep(0.3)
+			pyautogui.press('esc')
+			time.sleep(0.3)
+			copy()
+				
+			if 'check condition' not in clipboard.paste():
+				single_alt_tab()
+				cc = input(f'\n => Amount of {df.iat[i,int(dayclose_type)]} does not match for cheque number {cheque_no} !!!!.\nContinue after manual correction \n OR type restart to restart the process again>>>')
+				if cc == 'restart':
+					break
 
-			do_alt_tab = True
-			continue
+				do_alt_tab = True
+				continue
+		else:
+			time.sleep(0.5)
+			pyautogui.typewrite(str(amount))
+			pyautogui.press('tab')
+			time.sleep(sec-0.5)
+
 		
 		if keyboard.is_pressed('shift'):
 			pyautogui.alert('PAUSED...... Press enter to continue >>')
-
+			break
 
 	single_alt_tab()
 	input('End of the record.!!! Please copy another excel range for entering data or close the program to exit.')
